@@ -90,7 +90,7 @@ def get_schedule(item):
 	
 	return start_dt_iso, end_dt_iso, duration
 
-def get_social_events(html="soup", t="td", attr="slot-"):
+def get_social_events(html, t="td", attr="slot-"):
     
 	'''Usage: return a generator object to append records 
 	for each non-core event to the master dictionary'''
@@ -191,10 +191,9 @@ def get_href(url):
     
     return room, level, abstract, description
 
-def countify(day):
+def countify(day, **regex):
     '''Usage: return frequency dict of session type per day.'''
-    
-    #regex_date = re.compile(r"([A-Z][a-z]+day.*?\d{4})")
+
     #regex_kind = re.compile(r"(slot-)|(\w+)")
     
     header = day.find_previous("h3").text
@@ -217,10 +216,10 @@ def countify(day):
         }
     return date, freq_dict
 
-def get_sessions(html=day):
+def get_sessions(html):
     '''Usage: yield attribute dict as evaluated 
     on a session-by-session basis. '''
-    sessions = day.find_all("td", ["slot-talk", "slot-tutorial", "slot-plenary", "slot-discussion"])
+    sessions = html.find_all("td", ["slot-talk", "slot-tutorial", "slot-plenary", "slot-discussion"])
     
     for item in sessions:
          yield sessionify(item)  
