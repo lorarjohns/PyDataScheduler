@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import re
 import json
 import pprint
+from time import sleep
 
 from collections import Counter
 
@@ -59,10 +60,20 @@ def main():
     service = build("calendar", "v3", credentials=creds)
 
     # Call the Calendar API
-    now = datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
+    now = datetime.utcnow().isoformat() # 'Z' indicates UTC time
     # print('Getting the upcoming 10 events')
-    result = service.calendarList().list().execute()
-    calendar_id = result["items"][0]["id"]
+    # result = service.calendarList().list().execute()
+    
+    calendar = {
+    
+        'summary': 'PyData 2019',
+        'timeZone': 'America/New York',
+                }
+                
+    created_calendar = service.calendars().insert(body=calendar).execute()
+
+    print(f"New calendar: {created_calendar['id']}")
+    
 
     # events().list(calendarId='primary', timeMin=now,
     #                                     maxResults=10, singleEvents=True,
@@ -128,16 +139,14 @@ def main():
             },
         }
 
-        # try:
-        # event = (
-        #    service.events()
-        #    .insert(calendarId="primary", body=e, sendNotifications=True)
-        #    .execute()
-        # )
-        # print(f"Event created! {event['id']}")
-        # assert e["start"]["dateTime"] ==
-        # except:
-        # print(f"Failed to create event: {e}")
+        event = (
+            service.events()
+            .insert(calendarId=created_calendar["id"], body=e, sendNotifications=True)
+            .execute()
+        )
+        print(f"Event created! {event['id']}")
+        sleep(1)
+    # print(f"Event: {e}")
 
 
 """"""
@@ -161,10 +170,10 @@ def get_schedule(item, date):
     end_time = item.find_next("td", "time").string
 
     start_dt = datetime.strptime(date + " " + start_time, "%A %b. %d, %Y %I:%M %p")
-    start_dt_iso = start_dt.isoformat() + "Z"
+    start_dt_iso = start_dt.isoformat() #+ "Z"
 
     end_dt = datetime.strptime(date + " " + end_time, "%A %b. %d, %Y %I:%M %p")
-    end_dt_iso = end_dt.isoformat() + "Z"
+    end_dt_iso = end_dt.isoformat() #+ "Z"
 
     duration = str(end_dt - start_dt)
     return start_dt_iso, end_dt_iso, duration
@@ -188,12 +197,12 @@ def get_social_events(html, date, t="td", attr="slot-"):
 
             attr_dict = {
                 "name": title,
-                "performer": "None",
+                "performer": None,
                 "@type": "other",
-                "description": "None",
-                "summary": "None",
-                "level": "None",
-                "room": "",
+                "description": None,
+                "summary": None,
+                "level": None,
+                "room": None,
                 "url": BASE_URL + url,
                 "date": date,
                 "start": start_dt,
