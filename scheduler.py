@@ -4,6 +4,7 @@ import re
 import json
 import pprint
 from time import sleep
+from tqdm import tqdm
 
 from collections import Counter
 
@@ -16,6 +17,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 from bs4 import BeautifulSoup
+
+from ascii_logo import pydata_pride
 
 """
 to-do;
@@ -64,15 +67,15 @@ def main():
     # print('Getting the upcoming 10 events')
     # result = service.calendarList().list().execute()
     
-    calendar = {
+    cldr = {
     
-        'summary': 'PyData 2019',
-        'timeZone': 'America/New York',
+        'summary': 'PyData NYC 2019',
+        'timeZone': 'America/New_York'
                 }
                 
-    created_calendar = service.calendars().insert(body=calendar).execute()
+    new_calendar = service.calendars().insert(body=cldr).execute()
 
-    print(f"New calendar: {created_calendar['id']}")
+    cldr_id = new_calendar['id']
     
 
     # events().list(calendarId='primary', timeMin=now,
@@ -141,14 +144,12 @@ def main():
 
         event = (
             service.events()
-            .insert(calendarId=created_calendar["id"], body=e, sendNotifications=True)
+            .insert(calendarId=cldr_id, body=e, sendNotifications=True)
             .execute()
         )
-        print(f"Event created! {event['id']}")
-        sleep(1)
-    # print(f"Event: {e}")
-
-
+        print(f"Event created! {event['summary']}")
+        sleep(0.1)
+    
 """"""
 
 
@@ -170,10 +171,10 @@ def get_schedule(item, date):
     end_time = item.find_next("td", "time").string
 
     start_dt = datetime.strptime(date + " " + start_time, "%A %b. %d, %Y %I:%M %p")
-    start_dt_iso = start_dt.isoformat() #+ "Z"
+    start_dt_iso = str(start_dt.isoformat()) #+ "Z"
 
     end_dt = datetime.strptime(date + " " + end_time, "%A %b. %d, %Y %I:%M %p")
-    end_dt_iso = end_dt.isoformat() #+ "Z"
+    end_dt_iso = str(end_dt.isoformat()) #+ "Z"
 
     duration = str(end_dt - start_dt)
     return start_dt_iso, end_dt_iso, duration
@@ -184,7 +185,7 @@ def get_social_events(html, date, t="td", attr="slot-"):
     """Usage: return a generator object to append records 
     for each non-core event to the master dictionary"""
 
-    for tag in html.find_all(t, attr):
+    for tag in tqdm(html.find_all(t, attr)):
         if len(tag.text.strip()) > 0 and int(tag.attrs["colspan"]) > 1:
             title = tag.text.strip()
             start_dt, end_dt, duration = get_schedule(tag, date)
@@ -306,7 +307,7 @@ def get_sessions(html, date, *regex):
         "td", ["slot-talk", "slot-tutorial", "slot-plenary", "slot-discussion"]
     )
 
-    for item in sessions:
+    for item in tqdm(sessions):
         yield sessionify(item, date, regex_date, regex_kind)
 
 
@@ -343,10 +344,10 @@ def make_sessions_dict(soup):
             "td", ["slot-talk", "slot-tutorial", "slot-plenary", "slot-discussion"]
         )
 
-        for item in get_sessions(day, date, regex_date, regex_kind):
+        for item in tqdm(get_sessions(day, date, regex_date, regex_kind)):
             pydata["sessions"].append(item)
 
-    for item in get_social_events(day, date, "td", "slot-"):
+    for item in tqdm(get_social_events(day, date, "td", "slot-")):
         pydata["sessions"].append(item)
 
     return pydata
@@ -365,3 +366,4 @@ def jsonify(dictionary, fname):
 if __name__ == "__main__":
 
     main()
+    pydata_pride()
