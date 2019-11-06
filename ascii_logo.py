@@ -1,9 +1,12 @@
 import sys
-from PIL import Image
+from PIL import Image, ImageFont
+
+'''to do: try with devicons'''
 
 def pydata_pride():
     file = "pydata-logo-final.png"
     img = Image.open(file)
+    
     
     # resize
     w, h = img.size
@@ -30,4 +33,5 @@ def pydata_pride():
         f.write(ascii)
     
 if __name__ == "__main__":
-    print(ascii)
+    
+    pydata_pride()

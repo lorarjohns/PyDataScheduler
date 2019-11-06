@@ -142,13 +142,13 @@ def main():
             },
         }
 
-        event = (
-            service.events()
-            .insert(calendarId=cldr_id, body=e, sendNotifications=True)
-            .execute()
-        )
-        print(f"Event created! {event['summary']}")
-        sleep(0.1)
+        # event = (
+        #     service.events()	
+        #     .insert(calendarId=cldr_id, body=e, sendNotifications=True)
+        #     .execute()
+        # )
+        #print(f"Event created! {event['summary']}")
+        #sleep(0.1)
     
 """"""
 
@@ -340,6 +340,7 @@ def make_sessions_dict(soup):
 
     for day in days:
         date, freq = countify(day, regex_date, regex_kind)
+        pydata["date"].append({"day": date, "count":freq})
         sessions = day.find_all(
             "td", ["slot-talk", "slot-tutorial", "slot-plenary", "slot-discussion"]
         )
