@@ -28,6 +28,7 @@
 ![logo](ascii-py.png)
 ![event](event-detail.png)
 ![calendar](calendar.png)
+![gif](demo_.gif)
 
 ## Show your support
 
