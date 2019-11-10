@@ -15,7 +15,13 @@
 
 ### 🏠 [Homepage](https://github.com/lorarjohns/PyDataScheduler)
 
+![logo](ascii-py.png)
+![gif](demo_.gif)
+
 ### ✨ [Demo](https://github.com/lorarjohns/PyDataScheduler)
+
+![event](event-detail.png)
+![calendar](calendar.png)
 
 ## Author
 
@@ -24,11 +30,6 @@
 * Website: www.lorajohns.com
 * Twitter: [@lorarjohns](https://twitter.com/lorajohns)
 * Github: [@lorarjohns](https://github.com/lorarjohns)
-
-![logo](ascii-py.png)
-![event](event-detail.png)
-![calendar](calendar.png)
-![gif](demo_.gif)
 
 ## Show your support
 
